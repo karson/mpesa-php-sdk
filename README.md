@@ -5,7 +5,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/karson/mpesa-php-sdk.svg?style=flat-square)](https://scrutinizer-ci.com/g/karson/mpesa-php-sdk)
 [![Total Downloads](https://img.shields.io/packagist/dt/karson/mpesa-php-sdk.svg?style=flat-square)](https://packagist.org/packages/karson/mpesa-php-sdk)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+This package seeks to help php developers implement the various Mpesa APIs without much hustle. It is based on the REST API whose documentation is available on https://developer.mpesa.vm.co.mz/.
 
 ## Installation
 
@@ -18,7 +18,14 @@ composer require karson/mpesa-php-sdk
 ## Usage
 
 ``` php
-// Usage description here
+// Set the consumer key and consumer secret as follows
+$mpesa = new \Karson\MpesaPhpSdk\Mpesa();
+$mpesa->setApiKey('your api key');
+$mpesa->setPublicKey('your public key');
+
+This creates transaction between an M-Pesa short code to a phone number registered on M-Pesa.
+
+$result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id, $shortcode);
 ```
 
 ### Testing
