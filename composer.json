@@ -3,7 +3,12 @@
     "description": "",
     "keywords": [
         "karson",
-        "mpesa-php-sdk"
+        "mpesa-php-sdk",
+        "mpesa-api",
+        "mpesa",
+        "mpesa-sdk",
+        "mpesaapi",
+        "payment-gateway"
     ],
     "homepage": "https://github.com/karson/mpesa-php-sdk",
     "license": "MIT",
