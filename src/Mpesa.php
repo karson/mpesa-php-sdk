@@ -67,27 +67,6 @@ class Mpesa {
         ];
          return $this->makeRequest(':18354/ipg/v1x/reversal/', 'POST', $fields);
 
-        //url 18354/ipg/v1x/reversal/
-        // Request
-        // {
-        //     "input_TransactionID": "49XCDF6",
-        //     "input_SecurityCredential": "Mpesa2019",
-        //     "input_InitiatorIdentifier": "MPesa2018",
-        //     "input_ThirdPartyReference": "BMHFZD",
-        //     "input_ServiceProviderCode": "171717",
-        //     "input_ReversalAmount": "10"
-        // }
-
-        //sucess response
-        // {
-        //     "output_ResponseCode": "INS-0",
-        //     "output_ResponseDesc": "Request processed successfully",
-        //     "output_TransactionID": "5uw5x9wg7acw",
-        //     "output_ConversationID": "0f646c519193433c8edb1a6d0ac5ea6a",
-        //     "output_ThirdPartyReference": "BMHFZD"
-        // }
-
-
 
     }
 
@@ -99,11 +78,6 @@ class Mpesa {
      */
     public function status($thirdPartyReference, $queryReference, $serviceProviderCode)
     {
-        // :18353/ipg/v1x/queryTransactionStatus/ 
-        // request queryscrig get
-        // input_ThirdPartyReference:11114
-        // input_QueryReference:5C1400CVRO
-        // input_ServiceProviderCode:171717
 
         $fields = [
              'input_ThirdPartyReference' => $thirdPartyReference,
@@ -114,17 +88,10 @@ class Mpesa {
 
 
         return $this->makeRequest(':18353/ipg/v1x/queryTransactionStatus/', 'GET', $fields);
-        // response
-        // {
-        //     "output_ResponseCode": "INS-0",
-        //     "output_ResponseDesc": "Request processed successfully",
-        //     "output_ResponseTransactionStatus": "Completed",
-        //     "output_ConversationID": "51aaf4f410044c239ad755f0fd8abd92",
-        //     "output_ThirdPartyReference": "11114"
-        // }
+
     }
 
-        /**
+    /**
      * Generates a base64 encoded token
      */
     public function getToken()
@@ -169,9 +136,8 @@ class Mpesa {
         $header = $this->getHeader();
 
 
-        // curl_setopt($ch, CURLOPT_POST, count($fields));
-
-//        curl_setopt($ch, CURLOPT_PORT, $this->api_port);
+        curl_setopt($ch, CURLOPT_POST, count($fields));
+        curl_setopt($ch, CURLOPT_PORT, $this->api_port);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 90);
