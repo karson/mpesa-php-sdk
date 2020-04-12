@@ -4,14 +4,18 @@ namespace Karson\MpesaPhpSdk;
 
 class Mpesa {
 
-    private $api_url = "https://api.sandbox.vm.co.mz";
+    private $api_url = 'https://api.sandbox.vm.co.mz';
     private $api_port;
     public $public_key;
     public $api_key;
 
     public function __construct($config = [])
     {
-        $this->config = $config;
+        if (is_array($config)) {
+            $this->setPublicKey($config['public_key']);
+            $this->setApiKey($config['api_key']);
+            $this->setEnv($config['env']);
+        }
     }
 
     public function setPublicKey($public_key){
@@ -20,6 +24,12 @@ class Mpesa {
 
     public function setApiKey($api_key){
         $this->api_key = $api_key;
+    }
+
+    public function setEnv($env){
+        if ($env == 'live') {
+            $this->api_url = 'https://api.vm.co.mz';
+        }
     }
 
 
