@@ -4,7 +4,7 @@ namespace Karson\MpesaPhpSdk;
 
 class Mpesa {
 
-    public $api_url = 'https://api.sandbox.vm.co.mz';
+    private $api_url = 'https://api.sandbox.vm.co.mz';
     private $api_port;
     private $public_key;
     private $api_key;
