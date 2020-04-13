@@ -4,12 +4,12 @@ namespace Karson\MpesaPhpSdk;
 
 class Mpesa {
 
-    private $api_url = 'https://api.sandbox.vm.co.mz';
+    public $api_url = 'https://api.sandbox.vm.co.mz';
     private $api_port;
-    public $public_key;
-    public $api_key;
+    private $public_key;
+    private $api_key;
 
-    public function __construct($config = [])
+    public function __construct($config = null)
     {
         if (is_array($config)) {
             $this->setPublicKey($config['public_key']);
