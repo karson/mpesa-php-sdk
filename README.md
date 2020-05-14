@@ -22,6 +22,7 @@ composer require karson/mpesa-php-sdk
 $mpesa = new \Karson\MpesaPhpSdk\Mpesa();
 $mpesa->setApiKey('your api key');
 $mpesa->setPublicKey('your public key');
+$mpesa->setEnv('test');// 'live' production environment 
 
 //This creates transaction between an M-Pesa short code to a phone number registered on M-Pesa.
 
