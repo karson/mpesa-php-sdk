@@ -59,7 +59,7 @@ class Mpesa
             "input_ServiceProviderCode" => $serviceCode
         ];
 
-        return $this->makeRequest(':18352/ipg/v1x/c2bPayment/singleStage/', 'POST', $fields);
+        return $this->makeRequest('/ipg/v1x/c2bPayment/singleStage/', 18352,  'POST', $fields);
     }
 
     /**
@@ -81,7 +81,7 @@ class Mpesa
             "input_ServiceProviderCode" => $serviceProviderCode,
             "input_ReversalAmount" => $reversalAmount
         ];
-        return $this->makeRequest(':18354/ipg/v1x/reversal/', 'POST', $fields);
+        return $this->makeRequest('/ipg/v1x/reversal/', 18354, 'POST', $fields);
     }
 
     /**
@@ -101,7 +101,7 @@ class Mpesa
 
 
 
-        return $this->makeRequest(':18353/ipg/v1x/queryTransactionStatus/', 'GET', $fields);
+        return $this->makeRequest('/ipg/v1x/queryTransactionStatus/', 18353, 'GET', $fields);
     }
 
     /**
@@ -128,11 +128,11 @@ class Mpesa
      * @param array $fields
      * @return \stdClass
      */
-    private function makeRequest(string $url, string $method, array $fields = [])
+    private function makeRequest(string $url, int $port, string $method, array $fields = [])
     {
 
         $client = new Client([
-            'base_uri' => $this->base_uri,
+            'base_uri' => $this->base_uri . ':' . $port,
             'timeout' => 90,
         ]);
 
