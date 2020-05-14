@@ -3,11 +3,11 @@
     "description": "",
     "keywords": [
         "karson",
-        "mpesa-php-sdk",
+        "mpesa-sdk",
         "mpesa-api",
         "mpesa",
-        "mpesa-sdk",
-        "mpesaapi",
+        "payment-gateway",
+        "vodacom-mozambique",
         "payment-gateway"
     ],
     "homepage": "https://github.com/karson/mpesa-php-sdk",
