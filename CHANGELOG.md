@@ -12,5 +12,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Disable SSL Verification behavior of request
 
 ## [1.0] - 2020-01-14
-###Added
+### Added
 - Readme
