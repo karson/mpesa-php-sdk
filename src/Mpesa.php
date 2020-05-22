@@ -136,7 +136,12 @@ class Mpesa
             'timeout' => 90,
         ]);
 
-        $options = ['http_errors' => false, 'headers' => $this->getHeaders()];
+        $options = [
+            'http_errors' => false,
+            'headers' => $this->getHeaders(),
+            'verify' => false
+        ];
+
         if ($method == 'POST') {
             $options +=  ['json' => $fields];
         } else {
