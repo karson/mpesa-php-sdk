@@ -29,6 +29,21 @@ $mpesa->setEnv('test');// 'live' production environment
 $result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id, $shortcode);
 ```
 
+## Example of .env settings
+
+### Test environment
+
+```
+MPESA_PUBLIC_KEY="your public key here. Copy it from Mpesa Developer Console.(https://developer.mpesa.vm.co.mz/.)[https://developer.mpesa.vm.co.mz]"
+MPESA_API_HOST="api.sandbox.vm.co.mz"
+MPESA_API_KEY="your api key. Copy it from your Mpesa Developer console."
+MPESA_ORIGINs=developer.mpesa.vm.co.mz
+MPESA_SERVICE_PROVIDER_CODE=171717
+MPESA_INITIATOR_IDENTIFIER=xxx
+MPESA_SECURITY_CREDENTIAL=xxx
+
+```
+
 ### Testing
 
 ``` bash
