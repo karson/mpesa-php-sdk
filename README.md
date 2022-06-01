@@ -26,10 +26,16 @@ $mpesa->setServiceProviderCode('your public key');
 $mpesa->setEnv('test');// 'live' production environment 
 
 //This creates transaction between an M-Pesa service provider code to a phone number registered on M-Pesa.
+$invoice_id = "FT0001"; // Eg: Invoice number
+$phone_number = "258841234567"; // Prefixed with country code (258)
+$amount = "10"; // Payment amount
+$reference_id = "XBRAND001"; // Should be unique for each transaction
 
-//$result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id);
+$result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id);
 
-$result = $mpesa->c2b('FT0001', '258841234567', '10', 'UNIQREFERENCEID');
+$response = $result->getResponse();
+
+var_dump($response);
 ```
 
 ### Testing
