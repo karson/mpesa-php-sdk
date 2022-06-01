@@ -1,6 +1,6 @@
 <?php
 
-namespace MpesaPhpSdk\Providers;
+namespace Karson\MpesaPhpSdk\Providers;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
