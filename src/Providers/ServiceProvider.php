@@ -16,7 +16,6 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
-
         $this->publishes([
             __DIR__.'/../config/mpesa.php', config_path('mpesa.php'),
         ]);
@@ -30,18 +29,19 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/mpesa.php', 'mpesa'
+            __DIR__.'/../config/mpesa.php',
+            'mpesa'
         );
 
         $this->app->bind('\Karson\MpesaPhpSdk\Mpesa', function ($app) {
             $mpesa =  new \Karson\MpesaPhpSdk\Mpesa();
 
             $mpesa->setPublicKey(conig('mpesa.public_key'));
-$mpesa->setApiKey(conig('mpesa.api_key'));//test
+            $mpesa->setApiKey(conig('mpesa.api_key'));//test
 
-$mpesa->setEnv(conig('mpesa.env'));
+            $mpesa->setEnv(conig('mpesa.env'));
 
-return $mpesa;
+            return $mpesa;
         });
     }
 }
