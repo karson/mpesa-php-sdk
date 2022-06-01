@@ -13,6 +13,7 @@
     "homepage": "https://github.com/karson/mpesa-php-sdk",
     "license": "MIT",
     "type": "library",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Karson Adam",
