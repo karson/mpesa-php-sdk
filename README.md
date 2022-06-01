@@ -22,11 +22,14 @@ composer require karson/mpesa-php-sdk
 $mpesa = new \Karson\MpesaPhpSdk\Mpesa();
 $mpesa->setApiKey('your api key');
 $mpesa->setPublicKey('your public key');
+$mpesa->setServiceProviderCode('your public key');
 $mpesa->setEnv('test');// 'live' production environment 
 
-//This creates transaction between an M-Pesa short code to a phone number registered on M-Pesa.
+//This creates transaction between an M-Pesa service provider code to a phone number registered on M-Pesa.
 
-$result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id, $shortcode);
+//$result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id);
+
+$result = $mpesa->c2b('FT0001', '258841234567', '10', 'UNIQREFERENCEID');
 ```
 
 ### Testing

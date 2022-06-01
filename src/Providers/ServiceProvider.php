@@ -38,8 +38,8 @@ class ServiceProvider extends BaseServiceProvider
 
             $mpesa->setPublicKey(conig('mpesa.public_key'));
             $mpesa->setApiKey(conig('mpesa.api_key'));//test
-
             $mpesa->setEnv(conig('mpesa.env'));
+            $mpesa->setServiceProviderCode(conig('mpesa.service_provider_code'));
 
             return $mpesa;
         });
