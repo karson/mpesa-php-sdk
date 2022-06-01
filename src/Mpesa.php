@@ -18,7 +18,7 @@ class Mpesa
             $this->setPublicKey($config['public_key']);
             $this->setApiKey($config['api_key']);
             $this->setEnv($config['env']);
-            $this->setProviderCode($config['provider_code']);
+            $this->setServiceProviderCode($config['service_provider_code']);
         }
     }
 
@@ -32,9 +32,9 @@ class Mpesa
         $this->api_key = $api_key;
     }
 
-    public function setProviderCode($provider_code)
+    public function setServiceProviderCode($service_provider_code)
     {
-        $this->service_provider_code = $provider_code;
+        $this->service_service_provider_code = $service_provider_code;
     }
 
     public function setEnv($env)
