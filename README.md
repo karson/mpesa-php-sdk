@@ -37,7 +37,16 @@ $response = $result->getResponse();
 
 var_dump($response);
 ```
+### Instalation in Laravel
 
+``` php
+// Set the api, public key, provider and environment secret as follows in your .env file
+
+MPESA_API_KEY ="Your API Key";
+MPESA_PUBLIC_KEY='You Public Key'
+MPESA_ENV='test' // 'live' production environment
+MPESA_SERVICE_PROVIDER_CODE=171717
+```
 ### Testing
 
 ``` bash
