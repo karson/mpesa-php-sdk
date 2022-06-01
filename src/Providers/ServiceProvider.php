@@ -36,10 +36,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind('\Karson\MpesaPhpSdk\Mpesa', function ($app) {
             $mpesa =  new \Karson\MpesaPhpSdk\Mpesa();
 
-            $mpesa->setPublicKey(conig('mpesa.public_key'));
-            $mpesa->setApiKey(conig('mpesa.api_key'));//test
-            $mpesa->setEnv(conig('mpesa.env'));
-            $mpesa->setServiceProviderCode(conig('mpesa.service_provider_code'));
+            $mpesa->setPublicKey(config('mpesa.public_key'));
+            $mpesa->setApiKey(config('mpesa.pesa'));//test
+            $mpesa->setEnv(config('mpesa.env'));
+            $mpesa->setServiceProviderCode(config('mpesa.service_provider_code'));
 
             return $mpesa;
         });
