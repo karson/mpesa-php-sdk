@@ -34,7 +34,7 @@ class Mpesa
 
     public function setServiceProviderCode($service_provider_code)
     {
-        $this->service_service_provider_code = $service_provider_code;
+        $this->service_provider_code = $service_provider_code;
     }
 
     public function setEnv($env)

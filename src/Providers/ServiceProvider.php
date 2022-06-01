@@ -3,6 +3,7 @@
 namespace Karson\MpesaPhpSdk\Providers;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Karson\MpesaPhpSdk\Mpesa;
 
 /**
  * Service provider
@@ -33,11 +34,11 @@ class ServiceProvider extends BaseServiceProvider
             'mpesa'
         );
 
-        $this->app->bind('\Karson\MpesaPhpSdk\Mpesa', function ($app) {
+        $this->app->bind(Mpesa::class, function ($app) {
             $mpesa =  new \Karson\MpesaPhpSdk\Mpesa();
 
             $mpesa->setPublicKey(config('mpesa.public_key'));
-            $mpesa->setApiKey(config('mpesa.pesa'));//test
+            $mpesa->setApiKey(config('mpesa.api_key'));//test
             $mpesa->setEnv(config('mpesa.env'));
             $mpesa->setServiceProviderCode(config('mpesa.service_provider_code'));
 
