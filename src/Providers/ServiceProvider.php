@@ -17,7 +17,7 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/mpesa.php', config_path('mpesa.php'),
+            __DIR__.'/../config/mpesa.php'=> config_path('mpesa.php'),
         ]);
     }
 
