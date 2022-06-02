@@ -18,7 +18,7 @@ composer require karson/mpesa-php-sdk
 ## Usage
 
 ``` php
-// Set the api and public key as follows . Copy it from Mpesa Developer Console.(https://developer.mpesa.vm.co.mz/.)[https://developer.mpesa.vm.co.mz]
+// Set the api and public key as follows . Copy it from Mpesa Developer Console (https://developer.mpesa.vm.co.mz/) .
 $mpesa = new \Karson\MpesaPhpSdk\Mpesa();
 $mpesa->setApiKey('your api key');
 $mpesa->setPublicKey('your public key');
