@@ -7,10 +7,10 @@ use function GuzzleHttp\json_decode;
 
 class Mpesa
 {
-
     private $base_uri = 'https://api.sandbox.vm.co.mz';
     private $public_key;
     private $api_key;
+    private $service_provider_code;
 
     public function __construct($config = null)
     {
@@ -18,6 +18,7 @@ class Mpesa
             $this->setPublicKey($config['public_key']);
             $this->setApiKey($config['api_key']);
             $this->setEnv($config['env']);
+            $this->setServiceProviderCode($config['service_provider_code']);
         }
     }
 
@@ -29,6 +30,11 @@ class Mpesa
     public function setApiKey($api_key)
     {
         $this->api_key = $api_key;
+    }
+
+    public function setServiceProviderCode($service_provider_code)
+    {
+        $this->service_provider_code = $service_provider_code;
     }
 
     public function setEnv($env)
@@ -45,21 +51,21 @@ class Mpesa
      * @param string $customerMSISDN  MSISDN of the customer for the transaction
      * @param string $amount The amount for the transaction.
      * @param string $thirdPartReferece This is the unique reference of the third party system. When there are queries about transactions, this will usually be used to track a transaction.
-     * @param string $serviceCode Shortcode of the business where funds will be credited to.
+     * @param string $serviceProviderCode Shortcode of the business where funds will be credited to.
      * @return \stdClass
      */
-    function c2b($transactionReference, $customerMSISDN, $amount, $thirdPartReferece, $serviceCode)
+    public function c2b($transactionReference, $customerMSISDN, $amount, $thirdPartReferece, $serviceProviderCode = null)
     {
-
+        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
         $fields = [
             "input_TransactionReference" => $transactionReference,
             "input_CustomerMSISDN" => $customerMSISDN,
             "input_Amount" => $amount,
             "input_ThirdPartyReference" => $thirdPartReferece,
-            "input_ServiceProviderCode" => $serviceCode
+            "input_ServiceProviderCode" => $serviceProviderCode
         ];
 
-        return $this->makeRequest('/ipg/v1x/c2bPayment/singleStage/', 18352,  'POST', $fields);
+        return $this->makeRequest('/ipg/v1x/c2bPayment/singleStage/', 18352, 'POST', $fields);
     }
 
     /**
@@ -73,6 +79,7 @@ class Mpesa
      */
     public function transactionReversal($transactionID, $securityCredential, $initiatorIdentifier, $thirdPartyReference, $serviceProviderCode, $reversalAmount)
     {
+        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
         $fields = [
             "input_TransactionID" => $transactionID,
             "input_SecurityCredential" => $securityCredential,
@@ -92,7 +99,7 @@ class Mpesa
      */
     public function status($thirdPartyReference, $queryReference, $serviceProviderCode)
     {
-
+        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
         $fields = [
             'input_ThirdPartyReference' => $thirdPartyReference,
             'input_QueryReference' => $queryReference,
@@ -109,7 +116,6 @@ class Mpesa
      */
     public function getToken()
     {
-
         if (!empty($this->public_key) && !empty($this->api_key)) {
             $key = "-----BEGIN PUBLIC KEY-----\n";
             $key .= wordwrap($this->public_key, 60, "\n", true);
@@ -130,7 +136,6 @@ class Mpesa
      */
     private function makeRequest(string $url, int $port, string $method, array $fields = [])
     {
-
         $client = new Client([
             'base_uri' => $this->base_uri . ':' . $port,
             'timeout' => 90,

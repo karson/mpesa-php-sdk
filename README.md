@@ -18,30 +18,32 @@ composer require karson/mpesa-php-sdk
 ## Usage
 
 ``` php
-// Set the consumer key and consumer secret as follows
+// Set the api and public key as follows . Copy it from Mpesa Developer Console.(https://developer.mpesa.vm.co.mz/.)[https://developer.mpesa.vm.co.mz]
 $mpesa = new \Karson\MpesaPhpSdk\Mpesa();
 $mpesa->setApiKey('your api key');
 $mpesa->setPublicKey('your public key');
+$mpesa->setServiceProviderCode('your public key');
 $mpesa->setEnv('test');// 'live' production environment 
 
-//This creates transaction between an M-Pesa short code to a phone number registered on M-Pesa.
+//This creates transaction between an M-Pesa service provider code to a phone number registered on M-Pesa.
+$invoice_id = "FT0001"; // Eg: Invoice number
+$phone_number = "258841234567"; // Prefixed with country code (258)
+$amount = "10"; // Payment amount
+$reference_id = "XBRAND001"; // Should be unique for each transaction
 
-$result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id, $shortcode);
+$result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id);
+
+var_dump($result);
 ```
+### Instalation in Laravel
 
-## Example of .env settings
+``` php
+// Set the api, public key, provider and environment secret as follows in your .env file
 
-### Test environment
-
-```
-MPESA_PUBLIC_KEY="your public key here. Copy it from Mpesa Developer Console.(https://developer.mpesa.vm.co.mz/.)[https://developer.mpesa.vm.co.mz]"
-MPESA_API_HOST="api.sandbox.vm.co.mz"
-MPESA_API_KEY="your api key. Copy it from your Mpesa Developer console."
-MPESA_ORIGINs=developer.mpesa.vm.co.mz
+MPESA_API_KEY ="Your API Key";
+MPESA_PUBLIC_KEY='You Public Key'
+MPESA_ENV='test' // 'live' production environment
 MPESA_SERVICE_PROVIDER_CODE=171717
-MPESA_INITIATOR_IDENTIFIER=xxx
-MPESA_SECURITY_CREDENTIAL=xxx
-
 ```
 
 ### Testing
