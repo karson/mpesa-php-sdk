@@ -33,9 +33,7 @@ $reference_id = "XBRAND001"; // Should be unique for each transaction
 
 $result = $mpesa->c2b($invoice_id, $phone_number, $amount, $reference_id);
 
-$response = $result->getResponse();
-
-var_dump($response);
+var_dump($result);
 ```
 ### Instalation in Laravel
 
