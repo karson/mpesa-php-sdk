@@ -3,7 +3,6 @@
 namespace Karson\MpesaPhpSdk;
 
 use GuzzleHttp\Client;
-use function GuzzleHttp\json_decode;
 
 class Mpesa
 {
@@ -45,13 +44,14 @@ class Mpesa
     }
 
 
-    /* Standard customer-to-business transaction
+    /**
+     * Standard customer-to-business transaction
      *
-     * @param string $transactionReference This is the reference of the transaction for the customer or business making the * transaction. This can be a smartcard number for a TV subscription or a reference number of a utility bill.
-     * @param string $customerMSISDN  MSISDN of the customer for the transaction
-     * @param string $amount The amount for the transaction.
-     * @param string $thirdPartReferece This is the unique reference of the third party system. When there are queries about transactions, this will usually be used to track a transaction.
-     * @param string $serviceProviderCode Shortcode of the business where funds will be credited to.
+     * @param  $transactionReference
+     * @param  $customerMSISDN
+     * @param  $amount
+     * @param  $thirdPartReferece
+     * @param  $serviceProviderCode
      * @return \stdClass
      */
     public function c2b($transactionReference, $customerMSISDN, $amount, $thirdPartReferece, $serviceProviderCode = null)
@@ -69,6 +69,30 @@ class Mpesa
     }
 
     /**
+     * Business to customer transaction
+     *
+     * @param [type] $transactionReference
+     * @param [type] $customerMSISDN
+     * @param [type] $amount
+     * @param [type] $thirdPartReferece
+     * @param [type] $serviceProviderCode
+     * @return stdClass
+     */
+    public function b2c($transactionReference, $customerMSISDN, $amount, $thirdPartReferece, $serviceProviderCode = null)
+    {
+        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
+        $fields = [
+            "input_TransactionReference" => $transactionReference,
+            "input_CustomerMSISDN" => $customerMSISDN,
+            "input_Amount" => $amount,
+            "input_ThirdPartyReference" => $thirdPartReferece,
+            "input_ServiceProviderCode" => $serviceProviderCode
+        ];
+
+        return $this->makeRequest('/ipg/v1x/b2cPayment/', 18345, 'POST', $fields);
+    }
+
+    /**
      * @param $transactionID
      * @param $securityCredential
      * @param $initiatorIdentifier
@@ -77,7 +101,7 @@ class Mpesa
      * @param $reversalAmount
      * @return \stdClass
      */
-    public function transactionReversal($transactionID, $securityCredential, $initiatorIdentifier, $thirdPartyReference, $serviceProviderCode, $reversalAmount)
+    public function transactionReversal($transactionID, $securityCredential, $initiatorIdentifier, $thirdPartyReference, $serviceProviderCode = null, $reversalAmount = null)
     {
         $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
         $fields = [
@@ -86,9 +110,11 @@ class Mpesa
             "input_InitiatorIdentifier" => $initiatorIdentifier,
             "input_ThirdPartyReference" => $thirdPartyReference,
             "input_ServiceProviderCode" => $serviceProviderCode,
-            "input_ReversalAmount" => $reversalAmount
         ];
-        return $this->makeRequest('/ipg/v1x/reversal/', 18354, 'POST', $fields);
+        if (isset($reversalAmount)) {
+            $fields['input_ReversalAmount'] = $reversalAmount;
+        }
+        return $this->makeRequest('/ipg/v1x/reversal/', 18354, 'PUT', $fields);
     }
 
     /**
@@ -97,7 +123,7 @@ class Mpesa
      * @param $serviceProviderCode
      * @return \stdClass
      */
-    public function status($thirdPartyReference, $queryReference, $serviceProviderCode)
+    public function status($thirdPartyReference, $queryReference, $serviceProviderCode = null)
     {
         $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
         $fields = [
@@ -109,6 +135,25 @@ class Mpesa
 
 
         return $this->makeRequest('/ipg/v1x/queryTransactionStatus/', 18353, 'GET', $fields);
+    }
+
+    /**
+     * The Query Customer Name API is used to provide the customer’s name associated to the mobile money wallet on Business to Wallet transfers, for confirmation purposes. This API will provide the First and Second name from the customer but obfuscated.
+     * @param $thirdPartyReference
+     * @param $queryReference
+     * @param $serviceProviderCode
+     * @return \stdClass
+     */
+    public function queryCustomerName($customerMSISDN, $thirdPartReferece, $serviceProviderCode = null)
+    {
+        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
+        $fields = [
+            "input_CustomerMSISDN" => $customerMSISDN,
+            "input_ThirdPartyReference" => $thirdPartReferece,
+            "input_ServiceProviderCode" => $serviceProviderCode
+        ];
+
+        return $this->makeRequest('/ipg/v1x/queryCustomerName/', 19323, 'GET', $fields);
     }
 
     /**
@@ -147,7 +192,7 @@ class Mpesa
             'verify' => false
         ];
 
-        if ($method == 'POST') {
+        if ($method == 'POST' || $method == 'PUT') {
             $options +=  ['json' => $fields];
         } else {
             $options += ['query' => $fields];
