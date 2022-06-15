@@ -18,7 +18,7 @@ composer require karson/mpesa-php-sdk
 ## Usage
 
 ``` php
-// Set the consumer key and consumer secret as follows
+// Set the api and public key as follows . Copy it from Mpesa Developer Console (https://developer.mpesa.vm.co.mz/) .
 $mpesa = new \Karson\MpesaPhpSdk\Mpesa();
 $mpesa->setApiKey('your api key');
 $mpesa->setPublicKey('your public key');
@@ -45,6 +45,7 @@ MPESA_PUBLIC_KEY='You Public Key'
 MPESA_ENV='test' // 'live' production environment
 MPESA_SERVICE_PROVIDER_CODE=171717
 ```
+
 ### Testing
 
 ``` bash
