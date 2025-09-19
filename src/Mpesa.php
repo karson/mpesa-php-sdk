@@ -3,42 +3,38 @@
 namespace Karson\MpesaPhpSdk;
 
 use GuzzleHttp\Client;
+use Karson\MpesaPhpSdk\Auth\TokenManager;
+use Karson\MpesaPhpSdk\Response\AsyncResponse;
+use Karson\MpesaPhpSdk\Response\SyncResponse;
+use Karson\MpesaPhpSdk\Validation\ParameterValidator;
+use Karson\MpesaPhpSdk\Exceptions\ValidationException;
+use Karson\MpesaPhpSdk\Exceptions\AuthenticationException;
+use Karson\MpesaPhpSdk\Response\C2B\C2BResponseFactory;
+use Karson\MpesaPhpSdk\Response\B2C\B2CResponseFactory;
+use Karson\MpesaPhpSdk\Response\B2B\B2BResponseFactory;
+use Karson\MpesaPhpSdk\Response\Status\TransactionStatusResponse;
+use Karson\MpesaPhpSdk\Response\Query\CustomerNameResponse;
+use Karson\MpesaPhpSdk\Response\Refund\ReversalResponse;
 
 class Mpesa
 {
-    private $base_uri = 'https://api.sandbox.vm.co.mz';
-    private $public_key;
-    private $api_key;
-    private $service_provider_code;
+    private string $base_uri = 'https://api.sandbox.vm.co.mz';
+    private ?TokenManager $tokenManager = null;
 
-    public function __construct($config = null)
+    
+    /**
+     * Class constructor
+     *
+     * @param string $publicKey The public key provided by M-Pesa
+     * @param string $apiKey The API key provided by M-Pesa
+     * @param bool $isTest Whether the sandbox environment should be used
+     * @param string $providerCode The service provider code
+     */
+    public function __construct(private string $publicKey, private string $apiKey, private bool $isTest = true, private ?string $serviceProviderCode = null, private bool $isAsync = false)
     {
-        if (is_array($config)) {
-            $this->setPublicKey($config['public_key']);
-            $this->setApiKey($config['api_key']);
-            $this->setEnv($config['env']);
-            $this->setServiceProviderCode($config['service_provider_code']);
-        }
-    }
+        $this->tokenManager = new TokenManager($publicKey, $apiKey);
 
-    public function setPublicKey($public_key)
-    {
-        $this->public_key = trim($public_key);
-    }
-
-    public function setApiKey($api_key)
-    {
-        $this->api_key = $api_key;
-    }
-
-    public function setServiceProviderCode($service_provider_code)
-    {
-        $this->service_provider_code = $service_provider_code;
-    }
-
-    public function setEnv($env)
-    {
-        if ($env == 'live') {
+        if (!$isTest) {
             $this->base_uri = 'https://api.vm.co.mz';
         }
     }
@@ -47,63 +43,108 @@ class Mpesa
     /**
      * Standard customer-to-business transaction
      *
-     * @param  $transactionReference
-     * @param  $customerMSISDN
-     * @param  $amount
-     * @param  $thirdPartReferece
-     * @param  $serviceProviderCode
-     * @return \stdClass
+     * @param string $transactionReference
+     * @param string $from
+     * @param int $amount
+     * @param string $thirdPartReference
+     * @param bool $isAsync Se true, faz requisição assíncrona
+     * @return \Karson\MpesaPhpSdk\Response\C2B\C2BAsyncResponse|\Karson\MpesaPhpSdk\Response\C2B\C2BSyncResponse
+     * @throws ValidationException
      */
-    public function c2b($transactionReference, $customerMSISDN, $amount, $thirdPartReferece, $serviceProviderCode = null)
+    public function c2b(string $transactionReference, string $from, float $amount, string $thirdPartReference, ?string $serviceProviderCode = null): AsyncResponse|SyncResponse
     {
-        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
+        // Validate parameters
+        $params = [
+            'transactionReference' => $transactionReference,
+            'customerMSISDN' => $from,
+            'amount' => $amount,
+            'thirdPartyReference' => $thirdPartReference,
+            'serviceProviderCode' => $serviceProviderCode ?? $this->serviceProviderCode
+        ];
+        
+        $errors = ParameterValidator::validateC2BParameters($params);
+        if (!empty($errors)) {
+            throw new ValidationException($errors);
+        }
+        
         $fields = [
             "input_TransactionReference" => $transactionReference,
-            "input_CustomerMSISDN" => $customerMSISDN,
+            "input_CustomerMSISDN" => $from,
             "input_Amount" => $amount,
-            "input_ThirdPartyReference" => $thirdPartReferece,
-            "input_ServiceProviderCode" => $serviceProviderCode
+            "input_ThirdPartyReference" => $thirdPartReference,
+            "input_ServiceProviderCode" => $serviceProviderCode ?? $this->serviceProviderCode
         ];
 
-        return $this->makeRequest('/ipg/v1x/c2bPayment/singleStage/', 18352, 'POST', $fields);
+        $response = $this->makeRequest('/ipg/v1x/c2bPayment/singleStage/', 18352, 'POST', $fields);
+        
+        return C2BResponseFactory::create($response, $this->isAsync);
     }
 
     /**
      * Business to customer transaction
      *
-     * @param [type] $transactionReference
-     * @param [type] $customerMSISDN
-     * @param [type] $amount
-     * @param [type] $thirdPartReferece
-     * @param [type] $serviceProviderCode
-     * @return stdClass
+     * @param string $customerMSISDN
+     * @param int $amount
+     * @param string $transactionReference
+     * @param string $thirdPartReference
+     * @param bool $isAsync Se true, faz requisição assíncrona
+     * @return \Karson\MpesaPhpSdk\Response\B2C\B2CAsyncResponse|\Karson\MpesaPhpSdk\Response\B2C\B2CSyncResponse
      */
-    public function b2c($transactionReference, $customerMSISDN, $amount, $thirdPartReferece, $serviceProviderCode = null)
+    public function b2c(string $customerMSISDN, int $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = "171717"): AsyncResponse|SyncResponse
     {
-        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
         $fields = [
             "input_TransactionReference" => $transactionReference,
             "input_CustomerMSISDN" => $customerMSISDN,
             "input_Amount" => $amount,
-            "input_ThirdPartyReference" => $thirdPartReferece,
-            "input_ServiceProviderCode" => $serviceProviderCode
+            "input_ThirdPartyReference" => $thirdPartReference,
+            "input_ServiceProviderCode" => $serviceProviderCode ?? $this->serviceProviderCode
         ];
 
-        return $this->makeRequest('/ipg/v1x/b2cPayment/', 18345, 'POST', $fields);
+        $response = $this->makeRequest('/ipg/v1x/b2cPayment/', 18345, 'POST', $fields);
+        
+        return B2CResponseFactory::create($response, $this->isAsync);
     }
 
     /**
-     * @param $transactionID
-     * @param $securityCredential
-     * @param $initiatorIdentifier
-     * @param $thirdPartyReference
-     * @param $serviceProviderCode
-     * @param $reversalAmount
-     * @return \stdClass
+     * Business to business transaction
+     *
+     * @param string $transactionReference
+     * @param int $amount
+     * @param string $thirdPartReference
+     * @param string $primaryPartyCode Business shortcode for funds debit
+     * @param string $receiverPartyCode Business shortcode for funds credit
+     * @param bool $isAsync Se true, faz requisição assíncrona
+     * @return \Karson\MpesaPhpSdk\Response\B2B\B2BAsyncResponse|\Karson\MpesaPhpSdk\Response\B2B\B2BSyncResponse
      */
-    public function transactionReversal($transactionID, $securityCredential, $initiatorIdentifier, $thirdPartyReference, $serviceProviderCode = null, $reversalAmount = null)
+    public function b2b(string $transactionReference, int $amount, string $thirdPartReference, string $primaryPartyCode, string $receiverPartyCode): AsyncResponse|SyncResponse
     {
-        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
+        $fields = [
+            "input_TransactionReference" => $transactionReference,
+            "input_Amount" => $amount,
+            "input_ThirdPartyReference" => $thirdPartReference,
+            "input_PrimaryPartyCode" => $primaryPartyCode,
+            "input_ReceiverPartyCode" => $receiverPartyCode
+        ];
+
+        $response = $this->makeRequest('/ipg/v1x/b2bPayment/', 18349, 'POST', $fields);
+        
+        return B2BResponseFactory::create($response, $this->isAsync);
+    }
+
+    /**
+     * Process transaction refund/reversal
+     *
+     * @param string $transactionID
+     * @param string $securityCredential
+     * @param string $initiatorIdentifier
+     * @param string $thirdPartyReference
+     * @param string $serviceProviderCode
+     * @param string $reversalAmount Optional: for partial refunds
+     * @return ReversalResponse
+     */
+    public function reversal(string $transactionID, string $securityCredential, string $initiatorIdentifier, string $thirdPartyReference, ?string $serviceProviderCode = null, ?string $reversalAmount = null): ReversalResponse
+    {
+        $serviceProviderCode = $serviceProviderCode ?: $this->serviceProviderCode;
         $fields = [
             "input_TransactionID" => $transactionID,
             "input_SecurityCredential" => $securityCredential,
@@ -114,70 +155,88 @@ class Mpesa
         if (isset($reversalAmount)) {
             $fields['input_ReversalAmount'] = $reversalAmount;
         }
-        return $this->makeRequest('/ipg/v1x/reversal/', 18354, 'PUT', $fields);
+        
+        $response = $this->makeRequest('/ipg/v1x/reversal/', 18354, 'PUT', $fields);
+        
+        return new ReversalResponse($response);
     }
 
     /**
-     * @param $thirdPartyReference
-     * @param $queryReference
-     * @param $serviceProviderCode
-     * @return \stdClass
+     * Query transaction status
+     *
+     * @param string $thirdPartyReference
+     * @param string $queryReference
+     * @param string $serviceProviderCode
+     * @return TransactionStatusResponse
      */
-    public function status($thirdPartyReference, $queryReference, $serviceProviderCode = null)
+    public function queryTransactionStatus(string $thirdPartyReference, string $queryReference, ?string $serviceProviderCode = null): TransactionStatusResponse
     {
-        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
+        $serviceProviderCode = $serviceProviderCode ?: $this->serviceProviderCode;
         $fields = [
             'input_ThirdPartyReference' => $thirdPartyReference,
             'input_QueryReference' => $queryReference,
             'input_ServiceProviderCode' => $serviceProviderCode
         ];
 
-
-
-        return $this->makeRequest('/ipg/v1x/queryTransactionStatus/', 18353, 'GET', $fields);
+        $response = $this->makeRequest('/ipg/v1x/queryTransactionStatus/', 18353, 'GET', $fields);
+        
+        return new TransactionStatusResponse($response);
     }
 
     /**
-     * The Query Customer Name API is used to provide the customer’s name associated to the mobile money wallet on Business to Wallet transfers, for confirmation purposes. This API will provide the First and Second name from the customer but obfuscated.
-     * @param $thirdPartyReference
-     * @param $queryReference
-     * @param $serviceProviderCode
-     * @return \stdClass
+     * Query customer name for confirmation purposes
+     * The API provides the First and Second name from the customer but obfuscated.
+     * 
+     * @param string $customerMSISDN
+     * @param string $thirdPartyReference
+     * @param string $serviceProviderCode
+     * @return CustomerNameResponse
      */
-    public function queryCustomerName($customerMSISDN, $thirdPartReferece, $serviceProviderCode = null)
+    public function queryCustomerName(string $customerMSISDN, string $thirdPartyReference, ?string $serviceProviderCode = null): CustomerNameResponse
     {
-        $serviceProviderCode = $serviceProviderCode ?: $this->service_provider_code;
+        $serviceProviderCode = $serviceProviderCode ?: $this->serviceProviderCode;
         $fields = [
             "input_CustomerMSISDN" => $customerMSISDN,
-            "input_ThirdPartyReference" => $thirdPartReferece,
+            "input_ThirdPartyReference" => $thirdPartyReference,
             "input_ServiceProviderCode" => $serviceProviderCode
         ];
 
-        return $this->makeRequest('/ipg/v1x/queryCustomerName/', 19323, 'GET', $fields);
+        $response = $this->makeRequest('/ipg/v1x/queryCustomerName/', 19323, 'GET', $fields);
+        
+        return new CustomerNameResponse($response);
     }
 
     /**
      * Generates a base64 encoded token
+     * @throws AuthenticationException
      */
-    public function getToken()
+    public function getToken(): string
     {
-        if (!empty($this->public_key) && !empty($this->api_key)) {
-            $key = "-----BEGIN PUBLIC KEY-----\n";
-            $key .= wordwrap($this->public_key, 60, "\n", true);
-            $key .= "\n-----END PUBLIC KEY-----";
-            $pk = openssl_get_publickey($key);
-            openssl_public_encrypt($this->api_key, $token, $pk, OPENSSL_PKCS1_PADDING);
-
-            return base64_encode($token);
+        if (empty($this->public_key) || empty($this->api_key)) {
+            throw new AuthenticationException('Public key and API key are required');
         }
-        return 'error';
+        
+        try {
+            return $this->tokenManager->getToken();
+        } catch (\Exception $e) {
+            throw new AuthenticationException('Failed to generate token: ' . $e->getMessage(), 0, $e);
+        }
+    }
+    
+    /**
+     * Get token manager instance
+     */
+    public function getTokenManager(): TokenManager
+    {
+        return $this->tokenManager;
     }
 
     /**
      * @param string $url
+     * @param int $port
      * @param string $method
      * @param array $fields
-     * @return \stdClass
+     * @return \Psr\Http\Message\ResponseInterface
      */
     private function makeRequest(string $url, int $port, string $method, array $fields = [])
     {
@@ -197,19 +256,7 @@ class Mpesa
         } else {
             $options += ['query' => $fields];
         }
-
-        $response = $client->request($method, $url, $options);
-
-        $return = new \stdClass();
-        $return->response = json_decode($response->getBody());
-
-        if ($return->response == false) {
-            $return->response = $response->getBody();
-        }
-
-
-        $return->status = $response->getStatusCode();
-        return $return;
+        return $client->request($method, $url, $options);
     }
 
     /**
@@ -221,7 +268,8 @@ class Mpesa
             'Content-Type' => 'application/json',
             'Authorization' =>  'Bearer ' . $this->getToken(),
             'origin' => 'developer.mpesa.vm.co.mz',
-            'Connection' => 'keep-alive'
+            'Connection' => 'keep-alive',
+            'User-Agent' => 'Hypertech/MpesaPHP-SDK'
         ];
         return $headers;
     }
