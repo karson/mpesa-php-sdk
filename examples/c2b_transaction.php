@@ -12,12 +12,13 @@ $mpesa = new Mpesa(
     publicKey: 'your_public_key_here',
     apiKey: 'your_api_key_here',
     isTest: true, // true for sandbox, false for production
-    providerCode: '171717'
+    serviceProviderCode: '171717',
+    isAsync: false
 );
 
 // C2B Sync Transaction - Retorna SyncResponse
 echo "1. C2B Sync Transaction:\n";
-$syncResponse = $mpesa->receive(
+$syncResponse = $mpesa->c2b(
     transactionReference: 'C2B_TXN_001',
     from: '258841234567',
     amount: 100,
@@ -42,12 +43,11 @@ if ($syncResponse instanceof SyncResponse && $syncResponse->isTransactionSuccess
 
 // C2B Async Transaction - Retorna AsyncResponse
 echo "\n2. C2B Async Transaction:\n";
-$asyncResponse = $mpesa->receive(
+$asyncResponse = $mpesa->c2b(
     transactionReference: 'C2B_ASYNC_001',
     from: '258841234567',
     amount: 200,
     thirdPartReference: 'ASYNC_REF_001',
-    isAsync: true
 );
 
 // Agora o IDE sabe que é AsyncResponse e tem os métodos específicos
