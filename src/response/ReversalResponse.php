@@ -1,6 +1,6 @@
 <?php
 
-namespace Karson\MpesaPhpSdk\Response\Refund;
+namespace Karson\MpesaPhpSdk\Response;
 
 use Karson\MpesaPhpSdk\Response\BaseResponse;
 
