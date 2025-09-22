@@ -41,7 +41,6 @@ class TokenManager
         $this->token = base64_encode($encrypted);
     }
     
-    
     /**
      * Clear stored token
      */
