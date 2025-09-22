@@ -11,7 +11,7 @@ A comprehensive PHP SDK for integrating with M-Pesa Mozambique APIs. This packag
 
 - **🚀 Modern PHP 8.1+ Support**: Built with modern PHP features including typed properties, named arguments, and enums
 - **📦 Unified Response Architecture**: Streamlined response classes with eliminated code duplication (~90% reduction)
-- **🔄 Callback Handler System**: Complete callback processing with event-driven architecture
+- **🔄 Callback Handler System**: Complete callback processing with event-driven architecture (TODO)
 - **✅ Type Safety**: Strongly typed responses with specific methods for each operation
 - **🏗️ Clean Architecture**: Organized structure with dedicated response classes and clear inheritance
 - **🔐 Security First**: Built-in signature validation, parameter sanitization, and secure token management
@@ -145,7 +145,7 @@ if ($response->isTransactionSuccessful()) {
 ### Transaction Refund/Reversal
 
 ```php
-$response = $mpesa->refund(
+$response = $mpesa->reversal(
     transactionID: 'TXN123456',
     securityCredential: 'your_security_credential',
     initiatorIdentifier: 'your_initiator',
@@ -347,31 +347,11 @@ class PaymentController extends Controller
     
     public function handleCallback(Request $request)
     {
-        try {
-            $event = $this->callbackHandler->handle(
-                $request->getContent(),
-                $request->headers->all()
-            );
+
+            $response = $request->getContent(),
             
-            $response = $this->callbackHandler->createResponse($event);
-            
-            return response()->json(
-                json_decode($response['body']),
-                $response['status_code'],
-                $response['headers']
-            );
-            
-        } catch (CallbackException $e) {
-            Log::error('Callback processing failed', [
-                'error' => $e->getMessage(),
-                'payload' => $request->getContent()
-            ]);
-            
-            return response()->json([
-                'ResultCode' => 1,
-                'ResultDesc' => 'Callback processing failed'
-            ], 400);
-        }
+          ...
+        
     }
 }
 ```
@@ -437,7 +417,7 @@ if ($response->isTransactionInitiated()) {
     $conversationId = $response->getConversationId();
     
     // Later, check the status
-    $statusResponse = $mpesa->status('REF001', 'QUERY001');
+    $statusResponse = $mpesa->queryTransactionStatus('REF001', 'QUERY001');
     
     if ($statusResponse->isTransactionCompleted()) {
         echo "Transaction completed successfully";
@@ -494,7 +474,6 @@ try {
 - **ValidationException**: Thrown when input parameters fail validation
 - **AuthenticationException**: Thrown when API authentication fails
 - **ApiException**: Thrown when M-Pesa API returns an error
-- **CallbackException**: Thrown when callback processing fails
 
 ## Token Management
 
@@ -685,17 +664,6 @@ if ($response->isTransactionInitiated()) { /* async initiated */ }
 
 ### 📦 New Features
 
-#### Callback Handler System
-```php
-use Karson\MpesaPhpSdk\Callback\CallbackHandler;
-use Karson\MpesaPhpSdk\Callback\Events\TransactionCompletedEvent;
-
-$callbackHandler = new CallbackHandler();
-$callbackHandler->addListener(TransactionCompletedEvent::class, function($event) {
-    // Handle successful transactions
-    updateDatabase($event->getTransactionId(), 'completed');
-});
-```
 
 #### Enhanced Response Methods
 ```php
