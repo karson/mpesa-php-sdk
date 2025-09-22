@@ -39,8 +39,7 @@ class ServiceProvider extends BaseServiceProvider
                 $app['config']['mpesa.public_key'],
                 $app['config']['mpesa.api_key'],
                 $app['config']['mpesa.is_test'],
-                $app['config']['mpesa.service_provider_code'],
-                $app['config']['mpesa.is_async']
+                $app['config']['mpesa.service_provider_code']
             );
             return $mpesa;
         });
