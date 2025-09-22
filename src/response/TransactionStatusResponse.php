@@ -1,6 +1,6 @@
 <?php
 
-namespace Karson\MpesaPhpSdk\Response\Status;
+namespace Karson\MpesaPhpSdk\Response;
 
 use Karson\MpesaPhpSdk\Response\BaseResponse;
 use Karson\MpesaPhpSdk\Constants\TransactionStatus;

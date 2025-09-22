@@ -4,17 +4,13 @@ namespace Karson\MpesaPhpSdk;
 
 use GuzzleHttp\Client;
 use Karson\MpesaPhpSdk\Auth\TokenManager;
-use Karson\MpesaPhpSdk\Response\AsyncResponse;
-use Karson\MpesaPhpSdk\Response\SyncResponse;
+use Karson\MpesaPhpSdk\Response\ReversalResponse;
+use Karson\MpesaPhpSdk\Response\TransactionResponse;
 use Karson\MpesaPhpSdk\Validation\ParameterValidator;
 use Karson\MpesaPhpSdk\Exceptions\ValidationException;
 use Karson\MpesaPhpSdk\Exceptions\AuthenticationException;
-use Karson\MpesaPhpSdk\Response\C2B\C2BResponseFactory;
-use Karson\MpesaPhpSdk\Response\B2C\B2CResponseFactory;
-use Karson\MpesaPhpSdk\Response\B2B\B2BResponseFactory;
-use Karson\MpesaPhpSdk\Response\Status\TransactionStatusResponse;
-use Karson\MpesaPhpSdk\Response\Query\CustomerNameResponse;
-use Karson\MpesaPhpSdk\Response\Refund\ReversalResponse;
+use Karson\MpesaPhpSdk\Response\TransactionStatusResponse;
+use Karson\MpesaPhpSdk\Response\CustomerNameResponse;
 
 class Mpesa
 {
@@ -30,7 +26,7 @@ class Mpesa
      * @param bool $isTest Whether the sandbox environment should be used
      * @param string $providerCode The service provider code
      */
-    public function __construct(private string $publicKey, private string $apiKey, private bool $isTest = true, private ?string $serviceProviderCode = null, private bool $isAsync = false)
+    public function __construct(private string $publicKey, private string $apiKey, private bool $isTest = true, private ?string $serviceProviderCode = null)
     {
         $this->tokenManager = new TokenManager($publicKey, $apiKey);
 
@@ -47,11 +43,10 @@ class Mpesa
      * @param string $from
      * @param int $amount
      * @param string $thirdPartReference
-     * @param bool $isAsync Se true, faz requisição assíncrona
-     * @return \Karson\MpesaPhpSdk\Response\C2B\C2BAsyncResponse|\Karson\MpesaPhpSdk\Response\C2B\C2BSyncResponse
+     * @return TransactionResponse
      * @throws ValidationException
      */
-    public function c2b(string $transactionReference, string $from, float $amount, string $thirdPartReference, ?string $serviceProviderCode = null): AsyncResponse|SyncResponse
+    public function c2b(string $transactionReference, string $from, float $amount, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
     {
         // Validate parameters
         $params = [
@@ -77,20 +72,20 @@ class Mpesa
 
         $response = $this->makeRequest('/ipg/v1x/c2bPayment/singleStage/', 18352, 'POST', $fields);
         
-        return C2BResponseFactory::create($response, $this->isAsync);
+        return new TransactionResponse($response);
     }
 
+
     /**
-     * Business to customer transaction
+     * Business to customer transaction sync
      *
      * @param string $customerMSISDN
      * @param int $amount
      * @param string $transactionReference
      * @param string $thirdPartReference
-     * @param bool $isAsync Se true, faz requisição assíncrona
-     * @return \Karson\MpesaPhpSdk\Response\B2C\B2CAsyncResponse|\Karson\MpesaPhpSdk\Response\B2C\B2CSyncResponse
+     * @return TransactionResponse
      */
-    public function b2c(string $customerMSISDN, int $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = "171717"): AsyncResponse|SyncResponse
+    public function b2c(string $customerMSISDN, int $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = "171717"): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
@@ -102,21 +97,22 @@ class Mpesa
 
         $response = $this->makeRequest('/ipg/v1x/b2cPayment/', 18345, 'POST', $fields);
         
-        return B2CResponseFactory::create($response, $this->isAsync);
+        return new TransactionResponse($response);
     }
 
+  
+
     /**
-     * Business to business transaction
+     * Business to business transaction sync
      *
      * @param string $transactionReference
      * @param int $amount
      * @param string $thirdPartReference
      * @param string $primaryPartyCode Business shortcode for funds debit
      * @param string $receiverPartyCode Business shortcode for funds credit
-     * @param bool $isAsync Se true, faz requisição assíncrona
-     * @return \Karson\MpesaPhpSdk\Response\B2B\B2BAsyncResponse|\Karson\MpesaPhpSdk\Response\B2B\B2BSyncResponse
+     * @return TransactionResponse
      */
-    public function b2b(string $transactionReference, int $amount, string $thirdPartReference, string $primaryPartyCode, string $receiverPartyCode): AsyncResponse|SyncResponse
+    public function b2b(string $transactionReference, int $amount, string $thirdPartReference, string $primaryPartyCode, string $receiverPartyCode): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
@@ -128,8 +124,10 @@ class Mpesa
 
         $response = $this->makeRequest('/ipg/v1x/b2bPayment/', 18349, 'POST', $fields);
         
-        return B2BResponseFactory::create($response, $this->isAsync);
+        return new TransactionResponse($response);
     }
+
+
 
     /**
      * Process transaction refund/reversal
@@ -212,7 +210,7 @@ class Mpesa
      */
     public function getToken(): string
     {
-        if (empty($this->public_key) || empty($this->api_key)) {
+        if (empty($this->publicKey) || empty($this->apiKey)) {
             throw new AuthenticationException('Public key and API key are required');
         }
         

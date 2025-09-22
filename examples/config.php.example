@@ -1,0 +1,6 @@
+<?php
+
+$apiKey = 'api_key';
+$publicKey = 'public_key';
+$serviceProviderCode = 'service_provider_code';
+$isTest = true; // true for sandbox, false for production

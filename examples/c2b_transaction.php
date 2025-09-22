@@ -1,32 +1,30 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once 'config.php';
 
 use Karson\MpesaPhpSdk\Mpesa;
-use Karson\MpesaPhpSdk\Response\SyncResponse;
-use Karson\MpesaPhpSdk\Response\AsyncResponse;
+
 
 echo "=== C2B Transaction Example ===\n\n";
 
 $mpesa = new Mpesa(
-    publicKey: 'your_public_key_here',
-    apiKey: 'your_api_key_here',
-    isTest: true, // true for sandbox, false for production
-    serviceProviderCode: '171717',
-    isAsync: false
+    publicKey: $publicKey,
+    apiKey: $apiKey,
+    isTest: $isTest,
+    serviceProviderCode: $serviceProviderCode
 );
 
-// C2B Sync Transaction - Retorna SyncResponse
+// C2B Sync Transaction - Retorna BaseResponse
 echo "1. C2B Sync Transaction:\n";
 $syncResponse = $mpesa->c2b(
-    transactionReference: 'C2B_TXN_001',
-    from: '258841234567',
+    transactionReference: 'C2BTXN001' . time(),
+    from: '258848283607',
     amount: 100,
-    thirdPartReference: 'REF_001'
+    thirdPartReference: 'REF001'
 );
 
-// Agora o IDE sabe que é SyncResponse e tem os métodos específicos
-if ($syncResponse instanceof SyncResponse && $syncResponse->isTransactionSuccessful()) {
+if ($syncResponse->isTransactionSuccessful()) {
     echo "✓ Transaction successful!\n";
     echo "Transaction ID: " . $syncResponse->getTransactionId() . "\n";
     echo "Conversation ID: " . $syncResponse->getConversationId() . "\n";
@@ -35,33 +33,35 @@ if ($syncResponse instanceof SyncResponse && $syncResponse->isTransactionSuccess
     echo "✗ Transaction failed\n";
     if (!$syncResponse->isSuccessful()) {
         echo "HTTP Error: " . $syncResponse->getStatusCode() . "\n";
+        echo "code: " . $syncResponse->getResponseCode() . "\n";
+        echo "description: " . $syncResponse->getResponseDescription() . "\n";
     }
     if (!$syncResponse->isApiSuccess()) {
         echo "API Error: " . $syncResponse->getApiResponseDescription() . "\n";
     }
 }
 
-// C2B Async Transaction - Retorna AsyncResponse
-echo "\n2. C2B Async Transaction:\n";
-$asyncResponse = $mpesa->c2b(
-    transactionReference: 'C2B_ASYNC_001',
-    from: '258841234567',
-    amount: 200,
-    thirdPartReference: 'ASYNC_REF_001',
-);
+// // C2B Async Transaction - Retorna AsyncResponse
+// echo "\n2. C2B Async Transaction:\n";
+// $asyncResponse = $mpesa->c2bAsync(
+//     transactionReference: 'C2B_ASYNC_001' . time(),
+//     from: '258848283607',
+//     amount: 200,
+//     thirdPartReference: 'ASYNC_REF_001',
+// );
 
-// Agora o IDE sabe que é AsyncResponse e tem os métodos específicos
-if ($asyncResponse instanceof AsyncResponse && $asyncResponse->isTransactionInitiated()) {
-    echo "✓ Async transaction initiated!\n";
-    echo "Conversation ID: " . $asyncResponse->getConversationId() . "\n";
-    echo "Third Party Reference: " . $asyncResponse->getThirdPartyReference() . "\n";
-    echo "Response Code: " . $asyncResponse->getResponseCode() . "\n";
+// // Agora o IDE sabe que é AsyncResponse e tem os métodos específicos
+// if ($asyncResponse instanceof AsyncResponse && $asyncResponse->isTransactionInitiated()) {
+//     echo "✓ Async transaction initiated!\n";
+//     echo "Conversation ID: " . $asyncResponse->getConversationId() . "\n";
+//     echo "Third Party Reference: " . $asyncResponse->getThirdPartyReference() . "\n";
+//     echo "Response Code: " . $asyncResponse->getResponseCode() . "\n";
     
-    if ($asyncResponse->isAcceptedForProcessing()) {
-        echo "✓ Transaction accepted for processing\n";
-    }
-} else {
-    echo "✗ Async transaction failed to initiate\n";
-}
+//     if ($asyncResponse->isAcceptedForProcessing()) {
+//         echo "✓ Transaction accepted for processing\n";
+//     }
+// } else {
+//     echo "✗ Async transaction failed to initiate\n";
+// }
 
-echo "\n=== C2B Transaction Example Completed ===\n";
+// echo "\n=== C2B Transaction Example Completed ===\n";

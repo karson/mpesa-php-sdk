@@ -397,3 +397,43 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9...
 ### Token Expiration
 
 Tokens have a limited lifespan and should be refreshed when they expire. Monitor the response codes for authentication failures and implement token refresh logic accordingly.
+
+
+
+### Response Codes & Descriptions
+
+| Http Status Code	| Code	| Description |
+|-------------------|-------|-------------|
+| 200 / 201	| INS-0	| Request processed successfully |
+| 500	| INS-1	| Internal Error |
+| 401	| INS-2	| Invalid API Key |
+| 401	| INS-4	| User is not active |
+| 401	| INS-5	| Transaction cancelled by customer |
+| 401	| INS-6	| Transaction Failed |
+| 408	| INS-9	| Request timeout |
+| 409	| INS-10	| Duplicate Transaction |
+| 400	| INS-13	| Invalid Shortcode Used |
+| 400	| INS-14	| Invalid Reference Used |
+| 400	| INS-15	| Invalid Amount Used |
+| 503	| INS-16	| Unable to handle the request due to a temporary overloading |
+| 400	| INS-17	| Invalid Transaction Reference. Length Should Be Between 1 and 20. |
+| 400	| INS-18	| Invalid TransactionID Used |
+| 400	| INS-19	| Invalid ThirdPartyReference Used |
+| 400	| INS-20	| Not All Parameters Provided. Please try again. |
+| 400	| INS-21	| Parameter validations failed. Please try again. |
+| 400	| INS-22	| Invalid Operation Type |
+| 400	| INS-23	| Unknown Status. Contact M-Pesa Support |
+| 400	| INS-24	| Invalid InitiatorIdentifier Used |
+| 400	| INS-25	| Invalid SecurityCredential Used |
+| 400	| INS-26	| Not authorized |
+| 400	| INS-993	| Direct Debit Missing |
+| 400	| INS-994	| Direct Debit Already Exists |
+| 400	| INS-995	| Customer's Profile Has Problems |
+| 400	| INS-996	| Customer Account Status Not Active |
+| 400	| INS-997	| Linking Transaction Not Found |
+| 400	| INS-998	| Invalid Market |
+| 400	| INS-2001	| Initiator authentication error. |
+| 400	| INS-2002	| Receiver invalid. |
+| 422	| INS-2006	| Insufficient balance |
+| 400	| INS-2051	| MSISDN invalid. |
+| 400	| INS-2057	| Language code invalid. |

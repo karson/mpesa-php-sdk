@@ -43,7 +43,7 @@ $mpesa = new Mpesa(
     publicKey: 'your_public_key',
     apiKey: 'your_api_key', 
     isTest: true, // false for production
-    providerCode: '171717' // Your service provider code
+    serviceProviderCode: '171717' // Your service provider code
 );
 ```
 
@@ -51,7 +51,7 @@ $mpesa = new Mpesa(
 
 ```php
 // Synchronous C2B Transaction
-$response = $mpesa->receive(
+$response = $mpesa->c2b(
     transactionReference: 'TXN001',
     from: '258841234567',
     amount: 100,
@@ -66,12 +66,11 @@ if ($response->isTransactionSuccessful()) {
 }
 
 // Asynchronous C2B Transaction
-$response = $mpesa->receive(
+$response = $mpesa->c2bAsync(
     transactionReference: 'TXN001',
     from: '258841234567', 
     amount: 100,
-    thirdPartReference: 'REF001',
-    isAsync: true
+    thirdPartReference: 'REF001'
 );
 
 if ($response->isTransactionInitiated()) {
@@ -84,8 +83,8 @@ if ($response->isTransactionInitiated()) {
 
 ```php
 // Synchronous B2C Transaction
-$response = $mpesa->send(
-    to: '258841234567',
+$response = $mpesa->b2c(
+    customerMSISDN: '258841234567',
     amount: 100,
     transactionReference: 'TXN002',
     thirdPartReference: 'REF002'
@@ -97,12 +96,11 @@ if ($response->isTransactionSuccessful()) {
 }
 
 // Asynchronous B2C Transaction
-$response = $mpesa->send(
-    to: '258841234567',
+$response = $mpesa->b2cAsync(
+    customerMSISDN: '258841234567',
     amount: 100, 
     transactionReference: 'TXN002',
-    thirdPartReference: 'REF002',
-    isAsync: true
+    thirdPartReference: 'REF002'
 );
 
 if ($response->isTransactionInitiated()) {
@@ -156,13 +154,12 @@ if ($response->isTransactionSuccessful()) {
 }
 
 // Asynchronous B2B Transaction
-$response = $mpesa->b2b(
+$response = $mpesa->b2bAsync(
     transactionReference: 'TXN003',
     amount: 100,
     thirdPartReference: 'REF003',
     primaryPartyCode: '171717',
-    receiverPartyCode: '979797',
-    isAsync: true
+    receiverPartyCode: '979797'
 );
 
 if ($response->isTransactionInitiated()) {
@@ -190,31 +187,25 @@ if ($response->isSuccessful()) {
 
 All methods return strongly typed response objects with specific methods:
 
-#### C2B Response Methods
-- `getTransactionId()`: Get the transaction ID (sync only)
+#### SyncResponse Methods (C2BSyncResponse, B2CSyncResponse, B2BSyncResponse)
+- `getTransactionId()`: Get the transaction ID
 - `getConversationId()`: Get the conversation ID
 - `getResponseCode()`: Get the response code
 - `getResponseDescription()`: Get the response description
-- `isTransactionSuccessful()`: Check if transaction was successful (sync only)
-- `isTransactionInitiated()`: Check if async transaction was initiated
+- `isTransactionSuccessful()`: Check if transaction was successful
 
-#### B2C Response Methods
-- `getTransactionId()`: Get the transaction ID (sync only)
-- `getConversationId()`: Get the conversation ID
+#### AsyncResponse Methods (C2BAsyncResponse, B2CAsyncResponse, B2BAsyncResponse)
 - `getThirdPartyReference()`: Get the third party reference
+- `getConversationId()`: Get the conversation ID
 - `getResponseCode()`: Get the response code
 - `getResponseDescription()`: Get the response description
-- `isTransactionSuccessful()`: Check if transaction was successful (sync only)
 - `isTransactionInitiated()`: Check if async transaction was initiated
+- `isAcceptedForProcessing()`: Check if transaction was accepted for processing
 
-#### B2B Response Methods
-- `getTransactionId()`: Get the transaction ID (sync only)
-- `getConversationId()`: Get the conversation ID
-- `getThirdPartyReference()`: Get the third party reference
-- `getResponseCode()`: Get the response code
-- `getResponseDescription()`: Get the response description
-- `isTransactionSuccessful()`: Check if transaction was successful (sync only)
-- `isTransactionInitiated()`: Check if async transaction was initiated
+#### Additional Methods by Response Type
+- **C2BSyncResponse**: `getOriginatorConversationId()`
+- **B2CSyncResponse**: `getThirdPartyReference()`
+- **B2BSyncResponse**: `getThirdPartyReference()`
 
 #### Transaction Status Response Methods
 - `getTransactionId()`: Get the transaction ID
