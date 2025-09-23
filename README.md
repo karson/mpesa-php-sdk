@@ -619,7 +619,6 @@ composer install
 ### 🚀 Major Improvements
 
 - **Unified API**: All transaction methods (C2B, B2C, B2B) now return the same `TransactionResponse` class
-- **Callback Handler System**: Complete event-driven callback processing with intelligent error categorization
 - **Eliminated Code Duplication**: ~90% reduction in response class code through unified architecture
 - **Enhanced Type Safety**: Better IDE support with specific typed methods
 - **Improved Performance**: Optimized response parsing and memory usage
@@ -649,19 +648,6 @@ $transactionId = $response->getData()['output_TransactionID'];
 $transactionId = $response->getTransactionId();
 ```
 
-#### Async/Sync Methods Unified
-```php
-// Before v2.0 (separate methods)
-$syncResponse = $mpesa->c2b(...);
-$asyncResponse = $mpesa->c2bAsync(...);
-
-// v2.0+ (unified method)
-$response = $mpesa->c2b(...);
-// Check both sync and async status
-if ($response->isTransactionSuccessful()) { /* sync success */ }
-if ($response->isTransactionInitiated()) { /* async initiated */ }
-```
-
 ### 📦 New Features
 
 
@@ -673,9 +659,6 @@ $response->isTransactionInitiated();  // Check if async transaction started
 $response->isApiSuccess();            // Check M-Pesa API success
 ```
 
-### 📋 Migration Guide
-
-See [MIGRATION.md](MIGRATION.md) for detailed migration instructions from v1.x to v2.0.
 
 ### Changelog
 
