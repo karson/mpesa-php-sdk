@@ -40,18 +40,18 @@ class Mpesa
      * Standard customer-to-business transaction
      *
      * @param string $transactionReference
-     * @param string $from
+     * @param string $customerMSISDN
      * @param int $amount
      * @param string $thirdPartReference
      * @return TransactionResponse
      * @throws ValidationException
      */
-    public function c2b(string $transactionReference, string $from, float $amount, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
+    public function c2b(string $transactionReference, string $customerMSISDN, float $amount, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
     {
         // Validate parameters
         $params = [
             'transactionReference' => $transactionReference,
-            'customerMSISDN' => $from,
+            'customerMSISDN' => $customerMSISDN,
             'amount' => $amount,
             'thirdPartyReference' => $thirdPartReference,
             'serviceProviderCode' => $serviceProviderCode ?? $this->serviceProviderCode
@@ -64,7 +64,7 @@ class Mpesa
         
         $fields = [
             "input_TransactionReference" => $transactionReference,
-            "input_CustomerMSISDN" => $from,
+            "input_CustomerMSISDN" => $customerMSISDN,
             "input_Amount" => $amount,
             "input_ThirdPartyReference" => $thirdPartReference,
             "input_ServiceProviderCode" => $serviceProviderCode ?? $this->serviceProviderCode
