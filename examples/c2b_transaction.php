@@ -19,7 +19,7 @@ $mpesa = new Mpesa(
 echo "1. C2B Sync Transaction:\n";
 $syncResponse = $mpesa->c2b(
     transactionReference: 'C2BTXN001' . time(),
-    from: '258848283607',
+    customerMSISDN: '258841234567',
     amount: 100,
     thirdPartReference: 'REF001'
 );
