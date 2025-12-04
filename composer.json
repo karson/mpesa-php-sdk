@@ -56,10 +56,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Karson\\MpesaPhpSdk\\Providers\\ServiceProvider"
+                "Karson\\MpesaPhpSdk\\Laravel\\ServiceProvider"
             ],
             "aliases": {
-                "Mpesa": "Karson\\MpesaPhpSdk\\Facade"
+                "Mpesa": "Karson\\MpesaPhpSdk\\Laravel\\Mpesa"
             }
         }
     }
