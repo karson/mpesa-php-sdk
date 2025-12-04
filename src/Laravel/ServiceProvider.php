@@ -1,6 +1,6 @@
 <?php
 
-namespace Karson\MpesaPhpSdk\Providers;
+namespace Karson\MpesaPhpSdk\Laravel;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Karson\MpesaPhpSdk\Mpesa;
