@@ -35,10 +35,7 @@
     "autoload": {
         "psr-4": {
             "Karson\\MpesaPhpSdk\\": "src"
-        },
-        "files": [
-            "src/Mpesa.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
