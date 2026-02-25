@@ -41,12 +41,12 @@ class Mpesa
      *
      * @param string $transactionReference
      * @param string $customerMSISDN
-     * @param int $amount
+     * @param string $amount
      * @param string $thirdPartReference
      * @return TransactionResponse
      * @throws ValidationException
      */
-    public function c2b(string $transactionReference, string $customerMSISDN, float $amount, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
+    public function c2b(string $transactionReference, string $customerMSISDN, string $amount, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
     {
         // Validate parameters
         $params = [
@@ -80,12 +80,12 @@ class Mpesa
      * Business to customer transaction sync
      *
      * @param string $customerMSISDN
-     * @param int $amount
+     * @param string $amount
      * @param string $transactionReference
      * @param string $thirdPartReference
      * @return TransactionResponse
      */
-    public function b2c(string $customerMSISDN, int $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = "171717"): TransactionResponse
+    public function b2c(string $customerMSISDN, ?string $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = "171717"): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
@@ -106,13 +106,13 @@ class Mpesa
      * Business to business transaction sync
      *
      * @param string $transactionReference
-     * @param int $amount
+     * @param string $amount
      * @param string $thirdPartReference
      * @param string $primaryPartyCode Business shortcode for funds debit
      * @param string $receiverPartyCode Business shortcode for funds credit
      * @return TransactionResponse
      */
-    public function b2b(string $transactionReference, int $amount, string $thirdPartReference, string $primaryPartyCode, string $receiverPartyCode): TransactionResponse
+    public function b2b(string $transactionReference, ?string $amount, string $thirdPartReference, string $primaryPartyCode, string $receiverPartyCode): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
