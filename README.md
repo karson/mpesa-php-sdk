@@ -337,7 +337,7 @@ class PaymentController extends Controller
                 'third_party_reference' => $response->getThirdPartyReference()
             ]);
         }
-        
+    
         return response()->json([
             'success' => false,
             'message' => $response->getResponseDescription(),
