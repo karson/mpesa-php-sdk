@@ -39,9 +39,9 @@ abstract class BaseResponse
         return $this->statusCode;
     }
     
-    public function getRawResponse(): ?string
+    public function getRawResponse(): mixed
     {
-        return is_object($this->response) ? json_encode($this->response) : $this->response;
+        return $this->response;
     }
     
     public function getHeaders(): array
