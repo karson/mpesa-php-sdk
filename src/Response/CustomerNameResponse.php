@@ -9,8 +9,8 @@ class CustomerNameResponse extends BaseResponse
     private ?string $output_CustomerMSISDN;
     private ?string $output_FirstName;
     private ?string $output_SecondName;
-    private ?string $output_ResponseCode;
-    private ?string $output_ResponseDesc;
+    protected ?string $output_ResponseCode;
+    protected ?string $output_ResponseDesc;
     
     public function __construct(\Psr\Http\Message\ResponseInterface $response)
     {

@@ -14,8 +14,8 @@ abstract class BaseResponse
 
     protected ?string $output_TransactionID = null; // Sync response property
     protected ?string $output_ConversationID = null;
-    protected ?string $output_ResponseCode = null;
-    protected ?string $output_ResponseDescription = null;
+    private ?string $output_ResponseCode = null;
+    private ?string $output_ResponseDescription = null;
     private ?string $output_ThirdPartyReference = null; // Sync response property
 
     
@@ -39,9 +39,9 @@ abstract class BaseResponse
         return $this->statusCode;
     }
     
-    public function getRawResponse(): mixed
+    public function getRawResponse(): ?string
     {
-        return $this->response;
+        return is_object($this->response) ? json_encode($this->response) : $this->response;
     }
     
     public function getHeaders(): array

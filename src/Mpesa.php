@@ -14,7 +14,7 @@ use Karson\MpesaPhpSdk\Response\CustomerNameResponse;
 
 class Mpesa
 {
-    private string $base_uri = 'https://api.sandbox.vm.co.mz';
+    private string $base_uri = 'https://api.vm.co.mz';
     private ?TokenManager $tokenManager = null;
 
     
@@ -26,12 +26,12 @@ class Mpesa
      * @param bool $isTest Whether the sandbox environment should be used
      * @param string $providerCode The service provider code
      */
-    public function __construct(private string $publicKey, private string $apiKey, private bool $isTest = true, private ?string $serviceProviderCode = null)
+    public function __construct(private string $publicKey, private string $apiKey, private ?bool $isTest, private ?string $serviceProviderCode)
     {
         $this->tokenManager = new TokenManager($publicKey, $apiKey);
 
-        if (!$isTest) {
-            $this->base_uri = 'https://api.vm.co.mz';
+        if ($isTest) {
+            $this->base_uri = 'https://api.sandbox.vm.co.mz';
         }
     }
 
