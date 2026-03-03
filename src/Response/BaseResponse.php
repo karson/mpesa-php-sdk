@@ -41,7 +41,7 @@ abstract class BaseResponse
     
     public function getRawResponse(): mixed
     {
-        return $this->response;
+        return is_object($this->response)?json_encode($this->response):$this->response;
     }
     
     public function getHeaders(): array
