@@ -85,7 +85,7 @@ class Mpesa
      * @param string $thirdPartReference
      * @return TransactionResponse
      */
-    public function b2c(string $customerMSISDN, ?string $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = "171717"): TransactionResponse
+    public function b2c(string $customerMSISDN, ?string $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
@@ -112,7 +112,7 @@ class Mpesa
      * @param string $receiverPartyCode Business shortcode for funds credit
      * @return TransactionResponse
      */
-    public function b2b(string $transactionReference, ?string $amount, string $thirdPartReference, string $primaryPartyCode, string $receiverPartyCode): TransactionResponse
+    public function b2b(string $transactionReference, ?string $amount, string $thirdPartReference, string $primaryPartyCode, ?string $receiverPartyCode = null): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
