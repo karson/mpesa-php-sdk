@@ -12,8 +12,8 @@ abstract class BaseResponse
     protected array $headers;
     
 
-    protected ?string $output_TransactionID = null; // Sync response property
-    protected ?string $output_ConversationID = null;
+    private ?string $output_TransactionID = null; // Sync response property
+    private ?string $output_ConversationID = null;
     private ?string $output_ResponseCode = null;
     private ?string $output_ResponseDescription = null;
     private ?string $output_ThirdPartyReference = null; // Sync response property
