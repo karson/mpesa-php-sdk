@@ -32,6 +32,7 @@ class Mpesa
 
         if ($isTest) {
             $this->base_uri = 'https://api.sandbox.vm.co.mz';
+            $this->serviceProviderCode = '171717';
         }
     }
 
@@ -42,18 +43,18 @@ class Mpesa
      * @param string $transactionReference
      * @param string $customerMSISDN
      * @param string $amount
-     * @param string $thirdPartReference
+     * @param string $thirdPartyReference
      * @return TransactionResponse
      * @throws ValidationException
      */
-    public function c2b(string $transactionReference, string $customerMSISDN, string $amount, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
+    public function c2b(string $transactionReference, string $customerMSISDN, string $amount, string $thirdPartyReference, ?string $serviceProviderCode = null): TransactionResponse
     {
         // Validate parameters
         $params = [
             'transactionReference' => $transactionReference,
             'customerMSISDN' => $customerMSISDN,
             'amount' => $amount,
-            'thirdPartyReference' => $thirdPartReference,
+            'thirdPartyReference' => $thirdPartyReference,
             'serviceProviderCode' => $serviceProviderCode ?? $this->serviceProviderCode
         ];
         
@@ -66,7 +67,7 @@ class Mpesa
             "input_TransactionReference" => $transactionReference,
             "input_CustomerMSISDN" => $customerMSISDN,
             "input_Amount" => $amount,
-            "input_ThirdPartyReference" => $thirdPartReference,
+            "input_ThirdPartyReference" => $thirdPartyReference,
             "input_ServiceProviderCode" => $serviceProviderCode ?? $this->serviceProviderCode
         ];
 
@@ -82,16 +83,16 @@ class Mpesa
      * @param string $customerMSISDN
      * @param string $amount
      * @param string $transactionReference
-     * @param string $thirdPartReference
+     * @param string $thirdPartyReference
      * @return TransactionResponse
      */
-    public function b2c(string $customerMSISDN, ?string $amount, string $transactionReference, string $thirdPartReference, ?string $serviceProviderCode = null): TransactionResponse
+    public function b2c(string $customerMSISDN, ?string $amount, string $transactionReference, string $thirdPartyReference, ?string $serviceProviderCode = null): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
             "input_CustomerMSISDN" => $customerMSISDN,
             "input_Amount" => $amount,
-            "input_ThirdPartyReference" => $thirdPartReference,
+            "input_ThirdPartyReference" => $thirdPartyReference,
             "input_ServiceProviderCode" => $serviceProviderCode ?? $this->serviceProviderCode
         ];
 
@@ -107,17 +108,17 @@ class Mpesa
      *
      * @param string $transactionReference
      * @param string $amount
-     * @param string $thirdPartReference
+     * @param string $thirdPartyReference
      * @param string $primaryPartyCode Business shortcode for funds debit
      * @param string $receiverPartyCode Business shortcode for funds credit
      * @return TransactionResponse
      */
-    public function b2b(string $transactionReference, ?string $amount, string $thirdPartReference, ?string $primaryPartyCode, ?string $receiverPartyCode): TransactionResponse
+    public function b2b(string $transactionReference, ?string $amount, string $thirdPartyReference, ?string $primaryPartyCode, ?string $receiverPartyCode): TransactionResponse
     {
         $fields = [
             "input_TransactionReference" => $transactionReference,
             "input_Amount" => $amount,
-            "input_ThirdPartyReference" => $thirdPartReference,
+            "input_ThirdPartyReference" => $thirdPartyReference,
             "input_PrimaryPartyCode" => $primaryPartyCode,
             "input_ReceiverPartyCode" => $receiverPartyCode
         ];

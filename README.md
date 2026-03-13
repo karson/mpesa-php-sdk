@@ -52,9 +52,9 @@ $mpesa = new Mpesa(
 // C2B Transaction (Unified API)
 $response = $mpesa->c2b(
     transactionReference: 'TXN001',
-    from: '258841234567',
+    customerMSISDN: '258841234567',
     amount: 100,
-    thirdPartReference: 'REF001'
+    thirdPartyReference: 'REF001'
 );
 
 if ($response->isTransactionSuccessful()) {
@@ -80,7 +80,7 @@ $response = $mpesa->b2c(
     customerMSISDN: '258841234567',
     amount: 100,
     transactionReference: 'TXN002',
-    thirdPartReference: 'REF002'
+    thirdPartyReference: 'REF002'
 );
 
 if ($response->isTransactionSuccessful()) {
@@ -128,7 +128,7 @@ if ($response->isSuccessful()) {
 $response = $mpesa->b2b(
     transactionReference: 'TXN003',
     amount: 100,
-    thirdPartReference: 'REF003',
+    thirdPartyReference: 'REF003',
     primaryPartyCode: '171717', // Sender business code
     receiverPartyCode: '979797'  // Receiver business code
 );
@@ -323,9 +323,9 @@ class PaymentController extends Controller
     {
         $response = $this->mpesa->c2b(
             transactionReference: $request->transaction_ref,
-            from: $request->phone_number,
+            customerMSISDN: $request->phone_number,
             amount: $request->amount,
-            thirdPartReference: $request->reference
+            thirdPartyReference: $request->reference
         );
         
         if ($response->isTransactionSuccessful()) {
